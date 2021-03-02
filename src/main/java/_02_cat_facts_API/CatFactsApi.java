@@ -4,6 +4,8 @@ import _02_cat_facts_API.data_transfer_objects.CatWrapper;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.client.WebClient;
+
+import _01_intro_to_APIs.data_transfer_objects.Result;
 import reactor.core.publisher.Mono;
 
 /*
@@ -34,16 +36,22 @@ public class CatFactsApi {
         Use the WebClient to make the request, converting the response to String.class.
         This request doesn't require url parameters, so you can omit the .uri() method call entirely
         */
+    	  Mono<String> stringMono = webClient.get()
+                  .uri(uriBuilder -> uriBuilder
+       
+                          .build())
+                  .retrieve()
+                  .bodyToMono(String.class);
 
 
         //Collect the response from the Mono object
-
+    	  String response = stringMono.block(); 
 
         /*
         Print out the actual JSON response -
         this is what you will input into jsonschema2pojo.com
          */
-
+    	  System.out.println(response); 
 
         /*
         Use http://www.jsonschema2pojo.org/ to generate your POJO
@@ -53,20 +61,27 @@ public class CatFactsApi {
         Target Language = java
         Source Type = JSON
         Annotation Style = Gson
-        */
+       */
     }
 
     public String getCatFact() {
 
         //Make the request, saving the response in an object of the type that you just created in your
         //data_transfer_objects package (CatWrapper)
+    	  Mono<CatWrapper> cheetahMono = webClient
+                  .get()
+                  .retrieve()
+                  .bodyToMono(CatWrapper.class);
 
+    	
         //Use block() to collect the response into a java object using the class you just created
-
+    	  CatWrapper response = cheetahMono.block();
+    	
         //get the cat fact from the Data of the response
-
+    	  String catfact = response.getData().get(0);
+    	
         //return the message
-        return null;
+        return catfact;
 
     }
 
